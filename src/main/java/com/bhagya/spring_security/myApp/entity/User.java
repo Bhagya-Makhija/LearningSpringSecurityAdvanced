@@ -3,16 +3,9 @@ package com.bhagya.spring_security.myApp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.AuthProvider;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name="users",indexes = {
@@ -23,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User  {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +40,10 @@ public class User  {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    Set<Role> roles = new HashSet<>();
+    Set<Role> roles ;
 
     @Column(nullable = false)
-    private boolean isEnabled = true;
+    private boolean isEnabled;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

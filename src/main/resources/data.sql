@@ -1,7 +1,8 @@
-INSERT INTO users (id, username,email, password, provider_type, is_enabled, created_at)
+INSERT INTO users ( username,email, password, provider_type, is_enabled, created_at)
 VALUES
-(1, 'userA', 'userA@gmail.com', 'pass123', 'LOCAL', true, NOW()),
-(2, 'userB', 'userB@gmail.com', 'pass123', 'LOCAL', true, NOW());
+-- pass123
+('userA', 'userA@gmail.com', '$2a$10$1mU0Y1rVV2qafsJvM7BJc.hYkJRT4w.2FzctmakZXPpYh6tUFzMze', 'LOCAL', true, NOW()),
+('userB', 'userB@gmail.com', '$2a$10$1mU0Y1rVV2qafsJvM7BJc.hYkJRT4w.2FzctmakZXPpYh6tUFzMze', 'LOCAL', true, NOW());
 
 INSERT INTO user_roles (user_id, role)
 VALUES

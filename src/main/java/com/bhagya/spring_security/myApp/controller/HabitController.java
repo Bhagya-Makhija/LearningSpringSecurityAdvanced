@@ -41,8 +41,8 @@ public class HabitController {
         return habitRepository.findByUser(user);
     }
 
-    @GetMapping("/allHabits")
-    public List<Habit> getAllHabits(Principal principal) {
-        return habitRepository.findAll();
-    }
+    // @GetMapping("/allHabits")
+    // public List<Habit> getAllHabits(Principal principal) {
+    //     return habitRepository.findAll();
+    // }
 }
