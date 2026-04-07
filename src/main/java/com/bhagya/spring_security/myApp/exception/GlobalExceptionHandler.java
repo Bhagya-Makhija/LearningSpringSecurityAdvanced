@@ -6,27 +6,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.bhagya.spring_security.myApp.dto.AuthResponse;
+import com.bhagya.spring_security.myApp.dto.BasicAuthResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<AuthResponse> handleDataIntegrityViolation(DataIntegrityViolationException e) {
+    public ResponseEntity<BasicAuthResponse> handleDataIntegrityViolation(DataIntegrityViolationException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AuthResponse("User registration failed: Username or email already exists"));
+                .body(new BasicAuthResponse("User registration failed: Username or email already exists", null));
                 // .body(new AuthResponse("User registration failed: "+e.getMessage()));
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<AuthResponse> handleRuntimeException(RuntimeException e) {
+    public ResponseEntity<BasicAuthResponse> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AuthResponse(e.getMessage()));
+                .body(new BasicAuthResponse(e.getMessage(), null));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<AuthResponse> handleGeneralException(Exception e) {
+    public ResponseEntity<BasicAuthResponse> handleGeneralException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new AuthResponse("An unexpected error occurred: " + e.getMessage()));
+                .body(new BasicAuthResponse("An unexpected error occurred: " + e.getMessage(), null));
     }
 }

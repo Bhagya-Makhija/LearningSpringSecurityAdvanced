@@ -12,6 +12,7 @@ import com.bhagya.spring_security.myApp.security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
+// this service will let us use db for storing users credentials instead of in-memory authentication
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {

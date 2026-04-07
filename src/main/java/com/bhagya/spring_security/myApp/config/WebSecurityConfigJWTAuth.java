@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class WebSecurityConfig {
+public class WebSecurityConfigJWTAuth {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
          httpSecurity
