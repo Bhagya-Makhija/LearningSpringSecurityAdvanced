@@ -1,8 +1,8 @@
 INSERT INTO users ( username,email, password, provider_type, is_enabled, created_at)
 VALUES
 -- pass123
-('userA', 'userA@gmail.com', '$2a$10$1mU0Y1rVV2qafsJvM7BJc.hYkJRT4w.2FzctmakZXPpYh6tUFzMze', 'LOCAL', true, NOW()),
-('userB', 'userB@gmail.com', '$2a$10$1mU0Y1rVV2qafsJvM7BJc.hYkJRT4w.2FzctmakZXPpYh6tUFzMze', 'LOCAL', true, NOW());
+('userA', 'userA@gmail.com', '$2a$10$MBdS1i7SZcAIV3Xv4pAHc.fsbjl5x4iL5ptip1teBmPI/.BmlbOXq', 'LOCAL', true, NOW()),
+('userB', 'userB@gmail.com', '$2a$10$MBdS1i7SZcAIV3Xv4pAHc.fsbjl5x4iL5ptip1teBmPI/.BmlbOXq', 'LOCAL', true, NOW());
 
 INSERT INTO user_roles (user_id, role)
 VALUES

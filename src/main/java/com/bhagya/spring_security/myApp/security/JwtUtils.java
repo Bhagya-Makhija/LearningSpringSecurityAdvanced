@@ -27,7 +27,7 @@ public class JwtUtils {
 
      public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .setSubject(user.getUsername()) // storing username as the JWT subject
                 .claim("roles", user.getRoles().stream().map(role -> role.name()).toList())
                 .claim("userId", user.getId().toString())
                 .setIssuedAt(new Date())
@@ -36,6 +36,7 @@ public class JwtUtils {
                 .compact();
     }
 
+    // verifies the token and returns the username that was stored as the JWT subject.
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

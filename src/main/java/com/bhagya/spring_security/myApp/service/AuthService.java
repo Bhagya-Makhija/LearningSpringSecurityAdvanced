@@ -3,9 +3,6 @@ package com.bhagya.spring_security.myApp.service;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +24,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    // private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
 /*  public AuthResponse basicSignup(SignupRequest request) {
@@ -110,13 +107,13 @@ public class AuthService {
     public LoginResponse jwtLogin(LoginRequest request) {
 
         // Authenticate the user using the provided credentials
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()));
+        // Authentication authentication = authenticationManager.authenticate(
+        //         new UsernamePasswordAuthenticationToken(
+        //                 request.getUsername(),
+        //                 request.getPassword()));
 
         // If authentication is successful, retrieve the user details
-        User user = (User) authentication.getPrincipal();
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         // create jwt token if authentication is successful and return in response
         String jwtToken = jwtUtils.generateToken(user);
         return new LoginResponse(jwtToken, user.getId(),"Login Successful");
