@@ -14,7 +14,7 @@ import com.bhagya.spring_security.myApp.entity.AuthProviderType;
 import com.bhagya.spring_security.myApp.entity.Role;
 import com.bhagya.spring_security.myApp.entity.User;
 import com.bhagya.spring_security.myApp.repository.UserRepository;
-import com.bhagya.spring_security.myApp.security.JwtUtils;
+import com.bhagya.spring_security.myApp.security.JwtUtils2;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     // private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    // private final JwtUtils jwtUtils;
+    private final JwtUtils2 jwtUtils2;
 
 /*  public AuthResponse basicSignup(SignupRequest request) {
         try {
@@ -115,7 +116,8 @@ public class AuthService {
         // If authentication is successful, retrieve the user details
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         // create jwt token if authentication is successful and return in response
-        String jwtToken = jwtUtils.generateToken(user);
+        // String jwtToken = jwtUtils.generateToken(user);
+        String jwtToken = jwtUtils2.generateToken(user);
         return new LoginResponse(jwtToken, user.getId(),"Login Successful");
     }
 
