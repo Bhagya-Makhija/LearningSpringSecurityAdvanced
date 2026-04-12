@@ -3,7 +3,9 @@ package com.bhagya.spring_security.myApp.service;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.bhagya.spring_security.myApp.dto.LoginRequest;
@@ -11,8 +13,10 @@ import com.bhagya.spring_security.myApp.dto.LoginResponse;
 import com.bhagya.spring_security.myApp.dto.SignupRequest;
 import com.bhagya.spring_security.myApp.dto.SignupResponse;
 import com.bhagya.spring_security.myApp.entity.AuthProviderType;
+import com.bhagya.spring_security.myApp.entity.OAuthAccount;
 import com.bhagya.spring_security.myApp.entity.Role;
 import com.bhagya.spring_security.myApp.entity.User;
+import com.bhagya.spring_security.myApp.repository.OAuthAccountsRepository;
 import com.bhagya.spring_security.myApp.repository.UserRepository;
 import com.bhagya.spring_security.myApp.security.JwtUtils2;
 
@@ -27,6 +31,8 @@ public class AuthService {
     // private final AuthenticationManager authenticationManager;
     // private final JwtUtils jwtUtils;
     private final JwtUtils2 jwtUtils2;
+
+    private final OAuthAccountsRepository oauthRepo;
 
 /*  public AuthResponse basicSignup(SignupRequest request) {
         try {
@@ -89,7 +95,7 @@ public class AuthService {
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .roles(Set.of(Role.USER))
-                    .providerType(AuthProviderType.LOCAL)
+                    // .providerType(AuthProviderType.LOCAL)
                     .isEnabled(true)
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -103,7 +109,7 @@ public class AuthService {
             throw e;
         }
 
-    }
+    }    
 
     public LoginResponse jwtLogin(LoginRequest request) {
 
@@ -119,6 +125,52 @@ public class AuthService {
         // String jwtToken = jwtUtils.generateToken(user);
         String jwtToken = jwtUtils2.generateToken(user);
         return new LoginResponse(jwtToken, user.getId(),"Login Successful");
+    }
+
+    // for OAuth2
+
+    public ResponseEntity<LoginResponse> handleOAuth2LoginRequest(OAuth2User oAuth2User, String registrationId) {
+        // fetch providerType and providerId from the OAuth2User object
+        // it the user has an account -> login and return jwt token
+        // if the user does not have an account -> create an account(signup) and return jwt token(login)
+        AuthProviderType providerType = jwtUtils2.getProviderTypeFromRegistrationId(registrationId);
+        String providerId = jwtUtils2.determineProviderIdFromOAuth2User(oAuth2User, registrationId);
+
+        // Check OAuth account - if user exists with current providerId and providerType, then login and return jwt token
+        OAuthAccount account = oauthRepo.findByProviderTypeAndProviderId(providerType, providerId).orElse(null);
+        if(account != null) {
+            return ResponseEntity.ok(new LoginResponse(jwtUtils2.generateToken(account.getUser()), account.getUser().getId(), "Login successful"));
+        }
+
+        // Check if user exists with email
+        String email = oAuth2User.getAttribute("email");
+
+        if ((email == null || email.isBlank()) && registrationId.equalsIgnoreCase("github")) {
+            email = providerId + "@oauth.local"; // can be improved by fetching email using GitHub API with the access token, but for simplicity we are using dummy email here
+        }
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        // Create user if not exists
+        if(user == null) {
+            user = User.builder()
+                    .username(email)
+                    .email(email)
+                    .roles(Set.of(Role.USER))
+                    .isEnabled(true)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(user);
+        }   
+
+        // Link provider
+        OAuthAccount newAccount = new OAuthAccount();
+        newAccount.setProviderType(providerType);
+        newAccount.setProviderId(providerId);
+        newAccount.setUser(user);
+
+        oauthRepo.save(newAccount);
+
+        return ResponseEntity.ok(new LoginResponse(jwtUtils2.generateToken(user), user.getId(), "Login successful"));
     }
 
 }

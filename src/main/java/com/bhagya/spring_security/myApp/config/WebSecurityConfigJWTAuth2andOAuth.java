@@ -7,17 +7,13 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -26,36 +22,12 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-// @Configuration
+@Configuration
 @RequiredArgsConstructor
-public class WebSecurityConfigJWTAuth2 {
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/user/**").hasRole("USER")
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            // to configure application as an OAuth2 Resource Server that accepts and validates JWT tokens 
-            // it automates the process of extracting the token from the Authorization header, validating it, and setting up the security context for authenticated requests
-            // filter chain will automatically include a JwtAuthenticationFilter that processes incoming requests to validate the JWT token and set the authentication in the security context
-             .oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwt ->
-                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()) 
-                )
-            );
-
-        return http.build();
-    }
+@Slf4j
+public class WebSecurityConfigJWTAuth2andOAuth {
 
     // STEP 3: Create Key Pair using java.security.KeyPairGenerator
 	@Bean
@@ -113,24 +85,6 @@ public class WebSecurityConfigJWTAuth2 {
 		return new NimbusJwtEncoder(jwkSource);
 	}
 
-    // to convert ROLE_USER to USER so that at time of authorization,
-    // Spring Security can match the role from JWT with the role required for the endpoint
-    // otherwise it will not match because Spring Security by default adds "ROLE_" prefix to the roles defined in the endpoint 
-    // and if we have "ROLE_USER" in JWT, it will become "ROLE_ROLE_USER" 
-    // and won't match with "ROLE_USER" required for the endpoint
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-
-        converter.setAuthoritiesClaimName("scope");
-        converter.setAuthorityPrefix("");
-
-        JwtAuthenticationConverter authConverter = new JwtAuthenticationConverter();
-        authConverter.setJwtGrantedAuthoritiesConverter(converter);
-
-        return authConverter;
-    }
-
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
@@ -139,3 +93,4 @@ public class WebSecurityConfigJWTAuth2 {
 
 
 }
+
