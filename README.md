@@ -86,3 +86,12 @@ http://localhost:8080/api/v1/auth/signup
 http://localhost:8080/api/v1/auth/login
 http://localhost:8080/api/v1/login
 http://localhost:8080/api/v1/user/habits
+
+<img width="940" height="237" alt="image" src="https://github.com/user-attachments/assets/a80c7678-116b-4165-9549-7a5e66fbcebf" />
+
+<img width="940" height="211" alt="image" src="https://github.com/user-attachments/assets/d0e1910d-8900-4540-8810-ababfdf62133" />
+
+<img width="940" height="512" alt="image" src="https://github.com/user-attachments/assets/705870ac-dd72-4be6-b663-4806dfc6696d" />
+
+
+
